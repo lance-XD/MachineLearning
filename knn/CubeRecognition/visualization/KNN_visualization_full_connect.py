@@ -1,3 +1,5 @@
+import csv
+
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import pairwise_distances
@@ -39,6 +41,8 @@ for i, color in enumerate(colors):
 ax.scatter(test_point[0], test_point[1], test_point[2],
            color='black', label="测试点", s=100, marker='x')
 
+neighbors = []
+dists = []
 # 绘制连线并标注距离
 for dist, neighbor in zip(distances, X):
     ax.plot([test_point[0], neighbor[0]], [test_point[1], neighbor[1]],
@@ -53,6 +57,9 @@ for dist, neighbor in zip(distances, X):
     # 输出距离信息
     print(f"测试点 {test_point} 到点 {neighbor} 的距离: {int(dist)}")
 
+    neighbors.append(neighbor)
+    dists.append(int(dist))
+
 # 设置图形
 ax.set_title("测试点与所有点的连线及距离")
 ax.set_xlabel("R值")
@@ -62,3 +69,22 @@ ax.legend()
 
 # 显示图形
 plt.show()
+
+file_name = f'test.csv'
+# 打开文件并使用csv.writer写入数据
+with open(file_name, 'w', newline='', encoding='utf-8') as file:
+    writer = csv.writer(file)
+    # print(f"试室：高一{i + 1}班")
+    result = []
+    result.append(
+        ["红点", "到红点的距离", "绿点", "到绿点的距离", "蓝点", "到蓝点的距离", "黄点", "到黄点的距离", "橙点",
+         "到橙点的距离", "白点", "到白点的距离", ])
+    for i in range(5):
+        curr_row = []
+        for k in range(6):
+            curr_row.append(list(neighbors[i + k * 5]))
+            curr_row.append(dists[i + k * 5])
+        # print(curr_row)
+        result.append(curr_row)
+    # 写入多行数据
+    writer.writerows(result)
