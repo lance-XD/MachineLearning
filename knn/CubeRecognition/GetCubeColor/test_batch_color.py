@@ -17,6 +17,14 @@ def create_color_grid(rgb_list, block_size=100):
     # 创建空白图像
     color_image = np.zeros((height, width, 3), dtype=np.uint8)
 
+    # 设置字体和颜色
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    # 设置字号，更改此值
+    font_scale = 0.35
+    font_color = (0, 0, 0)  # 白色文字
+    thickness = 1
+    line_type = cv2.LINE_AA
+
     for i in range(len(rgb_list)):
         for j in range(len(rgb_list[i])):
             # 获取当前色块对应的 RGB 值
@@ -29,6 +37,16 @@ def create_color_grid(rgb_list, block_size=100):
             # print(f"({start_x}, {start_y}), ({end_x},{end_y})")
             # 设置色块颜色，注意 OpenCV 使用 BGR 格式
             color_image[start_x:end_x, start_y:end_y] = rgb_values[::-1]
+
+            # 将 RGB 值转为文本
+            rgb_text = f"({rgb_values[0]}, {rgb_values[1]}, {rgb_values[2]})"
+            # 计算文本的宽度和高度，以便将其居中
+            (text_width, text_height), _ = cv2.getTextSize(rgb_text, font, font_scale, thickness)
+            text_x = start_y + (block_size - text_width) // 2
+            text_y = start_x + (block_size + text_height) // 2
+
+            # 在色块上绘制 RGB 值
+            cv2.putText(color_image, rgb_text, (text_x, text_y), font, font_scale, font_color, thickness, line_type)
 
     return color_image
 
