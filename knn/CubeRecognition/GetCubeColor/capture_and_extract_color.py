@@ -2,9 +2,9 @@ import cv2
 import numpy as np
 
 # 打开摄像头,通过参数切换使用的摄像设备，0、1、2...
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
-print("按下 's' 拍照并识别颜色，按 'q' 退出。（输入法要切换到英文）")
+print("按下 'c' 拍照并识别颜色，按 'q' 退出。（输入法要切换到英文）")
 
 while True:
     # 读取摄像头的一帧画面
@@ -20,8 +20,8 @@ while True:
 
     # 检测按键
     key = cv2.waitKey(1) & 0xFF
-    if key == ord('s'):
-        # 按下 's' 键拍照
+    if key == ord('c'):
+        # 按下 'c' 键拍照
         image = frame.copy()
         break
     elif key == ord('q'):
@@ -60,11 +60,22 @@ for (x, y) in color_regions:
     bottom_right = (x + 5, y + 5)
     cv2.rectangle(image_resized, top_left, bottom_right, (0, 255, 0), 2)  # 绿色边框，厚度为2
 
-
 # 显示带标记的图像，便于验证感兴趣区域
 cv2.imshow('Captured Image with Regions', image_resized)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+
+print("按下 's' 保存此照片到程序文件夹，按其他按键关闭。（输入法要切换到英文）")
+
+# 检测按键,参数代表等待的时间,单位为ms,此处为0ms则会无限等待，直到用户按下任意按键
+key = cv2.waitKey(0) & 0xFF
+# 按's'键保存单张图片
+if key == ord('s'):
+    filename = 'captured_image.png'
+    cv2.imwrite(filename, image_resized)
+    print(f"图片已保存为 {filename}，图片位于本文件同一文件夹下")
+    cv2.destroyAllWindows()
+else:
+    # 按下 'q' 键退出
+    cv2.destroyAllWindows()
 
 # 输出每个区域的平均颜色值
 for i, color in enumerate(colors):
