@@ -70,7 +70,7 @@ ax.legend()
 # 显示图形
 plt.show()
 
-file_name = f'test.csv'
+file_name = f'dists.csv'
 # 打开文件并使用csv.writer写入数据
 with open(file_name, 'w', newline='', encoding='utf-8') as file:
     writer = csv.writer(file)
