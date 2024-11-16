@@ -57,16 +57,16 @@ plt.ylabel("PCA Component 2")
 plt.show()
 
 # 3. 添加测试数据点
-# test_datapoint = [10, 10, 250]  # 假设测试数据点
-# test_datapoint_2d = pca.transform([test_datapoint])
-# plt.figure(figsize=(6, 6))
-# plt.contourf(xx, yy, Z, cmap=plt.cm.Pastel1)
-# plt.scatter(X_2d[:, 0], X_2d[:, 1], c=y, cmap=plt.cm.Set1, edgecolor='k', s=100)
-# plt.scatter(test_datapoint_2d[0, 0], test_datapoint_2d[0, 1], marker='x', s=200, color='black')
-# plt.title("Test datapoint")
-# plt.xlabel("PCA Component 1")
-# plt.ylabel("PCA Component 2")
-# plt.show()
+test_datapoint = [10, 10, 250]  # 假设测试数据点
+test_datapoint_2d = pca.transform([test_datapoint])
+plt.figure(figsize=(6, 6))
+plt.contourf(xx, yy, Z, cmap=plt.cm.Pastel1)
+plt.scatter(X_2d[:, 0], X_2d[:, 1], c=y, cmap=plt.cm.Set1, edgecolor='k', s=100)
+plt.scatter(test_datapoint_2d[0, 0], test_datapoint_2d[0, 1], marker='x', s=200, color='black')
+plt.title("Test datapoint")
+plt.xlabel("PCA Component 1")
+plt.ylabel("PCA Component 2")
+plt.show()
 
 # 4. 绘制最近邻居
 dist, indices = knn.kneighbors(test_datapoint_2d)
