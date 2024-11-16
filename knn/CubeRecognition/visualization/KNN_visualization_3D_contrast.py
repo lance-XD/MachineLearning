@@ -2,12 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.neighbors import KNeighborsClassifier
 
-# 设置中文字体（以SimHei为例）
+# 设置中文字体,解决matplotlib无法正常显示中文的问题
 plt.rcParams['font.sans-serif'] = ['SimHei']  # 设置字体为黑体
 plt.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
 
 # 示例颜色数据（RGB三通道）
-# 用你自己的数据替换这些
 X = np.array([
     [255, 0, 0], [255, 0, 10], [235, 0, 0], [250, 30, 30], [250, 40, 40],
     [0, 255, 0], [0, 230, 10], [10, 235, 10], [50, 230, 50], [40, 210, 40],
@@ -17,7 +16,7 @@ X = np.array([
     [255, 255, 255], [240, 255, 240], [240, 240, 240], [250, 250, 250], [235, 235, 235]
 ])
 
-# 颜色标签 0: 红色, 1: 绿色, 2: 蓝色, 3: 黄色, 4: 橙色, 5:白色
+# 颜色标签 0: 红色, 1: 绿色, 2: 蓝色, 3: 黄色, 4: 橙色, 5: 白色
 y = np.array([0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5])
 
 # 测试点
@@ -26,72 +25,60 @@ test_point = np.array([20, 150, 110])
 # 创建 3D 图形
 fig = plt.figure(figsize=(16, 8))
 
+
+# **绘制图像方法**
+def plot_knn(ax, X, y, test_point, k, title):
+    # 创建 KNN 模型
+    knn = KNeighborsClassifier(n_neighbors=k)
+    knn.fit(X, y)
+
+    # 获取最近邻的索引和距离
+    distances, indices = knn.kneighbors([test_point])
+
+    # 颜色设置
+    colors = ['red', 'green', 'blue', 'yellow', 'orange', 'white']
+
+    # 绘制数据点
+    for i, color in enumerate(colors):
+        ax.scatter(X[y == i][:, 0], X[y == i][:, 1], X[y == i][:, 2],
+                   color=color, label=f'{colors[i]}', s=50)
+
+    # 测试点
+    ax.scatter(test_point[0], test_point[1], test_point[2],
+               color='black', label="测试点", s=100, marker='x')
+
+    # 绘制连线并标注距离
+    for dist, idx in zip(distances[0], indices[0]):
+        neighbor = X[idx]
+        ax.plot([test_point[0], neighbor[0]], [test_point[1], neighbor[1]],
+                [test_point[2], neighbor[2]], 'k--')
+
+        # 标注距离（保留整数部分）
+        mid_x = (test_point[0] + neighbor[0]) / 2
+        mid_y = (test_point[1] + neighbor[1]) / 2
+        mid_z = (test_point[2] + neighbor[2]) / 2
+        ax.text(mid_x, mid_y, mid_z, f'{int(dist)}', color='blue')
+
+        # 输出距离信息
+        print(f"K={k} 时，测试点到点 {neighbor} 的距离: {int(dist)}")
+
+    # 设置图形属性
+    ax.set_title(title)
+    ax.set_xlabel("R值")
+    ax.set_ylabel("G值")
+    ax.set_zlabel("B值")
+    ax.legend()
+
+
 # **第一张图：K=3 的分类结果**
-knn_k3 = KNeighborsClassifier(n_neighbors=3)
-knn_k3.fit(X, y)
-
-# 预测测试点
-k3_result = knn_k3.predict([test_point])[0]
-k3_neighbors = knn_k3.kneighbors([test_point], return_distance=False)[0]
-
-# 第一张图绘制
 ax1 = fig.add_subplot(121, projection='3d')
-colors = ['red', 'green', 'blue', 'yellow', 'orange', 'gray']
-for i, color in enumerate(colors):
-    ax1.scatter(X[y == i][:, 0], X[y == i][:, 1], X[y == i][:, 2],
-                color=color, label=f'{colors[i]}', s=50)
-
-# 测试点
-ax1.scatter(test_point[0], test_point[1], test_point[2],
-            color='black', label="测试点", s=100, marker='x')
-
-# 连接测试点与最近的 3 个邻居
-for neighbor_index in k3_neighbors:
-    neighbor = X[neighbor_index]
-    ax1.plot([test_point[0], neighbor[0]], [test_point[1], neighbor[1]],
-             [test_point[2], neighbor[2]], 'k--')
-
-ax1.set_title("K=3 分类结果")
-ax1.set_xlabel("R值")
-ax1.set_ylabel("G值")
-ax1.set_zlabel("B值")
-ax1.legend()
+plot_knn(ax1, X, y, test_point, k=3, title="K=3 最近邻")
 
 # **第二张图：K=5 的分类结果**
-knn_k5 = KNeighborsClassifier(n_neighbors=5)
-knn_k5.fit(X, y)
-
-# 预测测试点
-k5_result = knn_k5.predict([test_point])[0]
-k5_neighbors = knn_k5.kneighbors([test_point], return_distance=False)[0]
-
-# 第二张图绘制
 ax2 = fig.add_subplot(122, projection='3d')
-for i, color in enumerate(colors):
-    ax2.scatter(X[y == i][:, 0], X[y == i][:, 1], X[y == i][:, 2],
-                color=color, label=f'{colors[i]}', s=50)
-
-# 测试点
-ax2.scatter(test_point[0], test_point[1], test_point[2],
-            color='black', label="测试点", s=100, marker='x')
-
-# 连接测试点与最近的 3 个邻居
-for neighbor_index in k5_neighbors:
-    neighbor = X[neighbor_index]
-    ax2.plot([test_point[0], neighbor[0]], [test_point[1], neighbor[1]],
-             [test_point[2], neighbor[2]], 'k--')
-
-ax2.set_title("K=3 分类结果")
-ax2.set_xlabel("R值")
-ax2.set_ylabel("G值")
-ax2.set_zlabel("B值")
-ax2.legend()
+plot_knn(ax2, X, y, test_point, k=5, title="K=5 最近邻")
 
 # 显示图形
-plt.suptitle("KNN 分类过程（K=3 vs K=5）", fontsize=16)
+plt.suptitle("KNN 测试点与邻居连线示意图 (K=3 vs K=5)", fontsize=16)
 plt.tight_layout()
 plt.show()
-
-# 打印分类结果
-print(f"K=3 时分类结果: {k3_result}（错误分类）")
-print(f"K=5 时分类结果: {k5_result}（正确分类）")
