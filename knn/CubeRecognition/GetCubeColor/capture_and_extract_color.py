@@ -34,7 +34,7 @@ while True:
 cap.release()
 cv2.destroyAllWindows()
 
-# 缩放图片以便后续处理
+# 缩放图片以便后续处理,本行会将图片缩放为300x300像素的图像
 image_resized = cv2.resize(image, (300, 300))
 
 # 转换为 RGB 色彩空间
