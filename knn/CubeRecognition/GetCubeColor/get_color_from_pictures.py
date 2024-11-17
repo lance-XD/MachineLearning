@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # 加载图像文件,采用相对路径
-image = cv2.imread('../../RubiksCubePicture/cube_image_1.png')
+image = cv2.imread('../RubiksCubePicture/cube_image_1.png')
 # 缩放图像成300x300，便于处理
 image_resized = cv2.resize(image, (300, 300))
 
