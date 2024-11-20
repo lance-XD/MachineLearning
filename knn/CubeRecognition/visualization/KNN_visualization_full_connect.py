@@ -2,7 +2,6 @@ import csv
 
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.metrics import pairwise_distances
 
 # 设置中文字体（以SimHei为例）
 plt.rcParams['font.sans-serif'] = ['SimHei']  # 设置字体为黑体
