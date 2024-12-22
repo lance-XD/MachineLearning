@@ -5,6 +5,7 @@
 import _pickle as cPickle
 import gzip
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def load_data():
@@ -54,3 +55,28 @@ def vectorized_result(j):
     e = np.zeros((10, 1))
     e[j] = 1.0
     return e
+
+
+def show_sample_image():
+    """
+    显示一张mnist中的图片作为示例
+    :return:
+    """
+    # 加载训练数据
+    training_data, validation_data, test_data = load_data()
+
+    # 提取一个样本图像和对应的标签
+    image = training_data[0][0]  # 获取第一个训练样本
+    label = training_data[1][0]  # 获取第一个训练样本的标签
+
+    # 将图像数据调整为28x28格式
+    image = np.reshape(image, (28, 28))
+
+    # 显示图像
+    plt.imshow(image, cmap='gray')  # 使用灰度显示
+    plt.title(f"Label: {label}")  # 显示标签作为标题
+    plt.axis('off')  # 关闭坐标轴
+    plt.show()
+
+# 显示一张示例图片
+# show_sample_image()
