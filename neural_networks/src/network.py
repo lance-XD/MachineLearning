@@ -140,7 +140,7 @@ class Network:
             activation = self.sigmoid(z)
             # 保存所有激活后的值
             activations.append(activation)
-        # 反向传播，从后往前，逐层使用
+        # 反向传播，从后往前，逐层使用。初始的误差项由损失函数提供
         delta = self.cost_derivative(activations[-1], y) * self.sigmoid_prime(zs[-1])
 
         nabla_b[-1] = delta
@@ -160,9 +160,9 @@ class Network:
 
     def cost_derivative(self, output_activations, y):
         """
-        取得激活值的偏导数的向量
-        :param output_activations:
-        :param y:
-        :return:
+        取得激活值的偏导数的向量，对于损失函数(∑(a-y)^2) / 2的导数，为a-y
+        :param output_activations: 实际的输出值
+        :param y: 真实的输出值
+        :return: 损失函数的导数
         """
         return output_activations - y
