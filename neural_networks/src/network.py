@@ -145,14 +145,14 @@ class Network:
 
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())
-        # 从后往前逐层更新权重和偏置值，-2为倒数第2层
+        # 从后往前逐层计算权重和偏置值的偏导数，-2为倒数第2层
         for l in range(2, self.num_layers):
             z = zs[-l]
             # 计算导数
             sp = self.sigmoid_prime(z)
-            # 链式法则的反向传导
+            # -l层的误差
             delta = np.dot(self.weights[-l + 1].transpose(), delta) * sp
-            # 得到该层的梯度值
+            # -l层的∇𝑤和∇𝑏
             nabla_b[-l] = delta
             nabla_w[-l] = np.dot(delta, activations[-l - 1].transpose())
 
@@ -160,7 +160,7 @@ class Network:
 
     def cost_derivative(self, output_activations, y):
         """
-        取得激活值的偏导数的向量，对于损失函数(∑(a-y)^2) / 2的导数，为a-y
+        取得最终输出激活值的偏导数的向量，对于损失函数(∑(a-y)^2) / 2的导数，为a-y
         :param output_activations: 实际的输出值
         :param y: 真实的输出值
         :return: 损失函数的导数
