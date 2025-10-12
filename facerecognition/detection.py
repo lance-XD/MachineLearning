@@ -161,8 +161,8 @@ def main():
     detector = FaceLandmarkDetector('shape_predictor_68_face_landmarks.dat')
 
     # 检测并绘制特征点
-    image_path = '1.jpg'  # 替换为你的图片路径
-    output_path = 'output_landmarks.jpg'  # 输出图片路径
+    image_path = 'testpictures/1.jpg'  # 替换为你的图片路径
+    output_path = 'output/output_landmarks.jpg'  # 输出图片路径
 
     try:
         detector.draw_landmarks_matplotlib(image_path, save_path=output_path)
