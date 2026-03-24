@@ -54,9 +54,12 @@ def get_all_images(marker_path):
     image_files = []
     
     # 遍历所有子目录和文件
+    # os.walk 返回一个生成器，每次迭代产生一个三元组 (dirpath, dirnames, filenames)，从高层级到低层级依次返回
+    # 三元组，最外层时的files是目录，内层目录为root时，则dirs为空，文件名为files
     for root, dirs, files in os.walk(marker_path):
         for file in sorted(files):
             file_path = os.path.join(root, file)
+            # 扩展名
             file_ext = os.path.splitext(file)[1].lower()
             if file_ext in image_extensions:
                 image_files.append(file_path)
@@ -89,7 +92,7 @@ def process_marker_data(marker_name, data_path, output_path):
     print(f"  处理标志: {marker_name}")
     print(f"    找到 {len(image_files)} 张图片")
     
-    # 复制并重命名图片
+    # 复制并重命名图片,start参数指定idx的值从1开始
     for idx, image_path in enumerate(image_files, start=1):
         # 获取原始文件扩展名
         _, ext = os.path.splitext(image_path)
@@ -112,7 +115,7 @@ def main():
     # 获取脚本所在目录
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
-    # 设置路径
+    # 设置路径,路径上类似于D:\Pycharm\Projects\MachineLearning\markerrecognition\src\..\data
     data_path = os.path.join(script_dir, "..", "data")
     output_path = os.path.join(script_dir, "..", "output")
     
