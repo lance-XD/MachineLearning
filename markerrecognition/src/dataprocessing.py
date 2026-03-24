@@ -19,7 +19,6 @@
 
 import os
 import shutil
-from pathlib import Path
 
 
 def get_marker_folders(data_path):
@@ -52,7 +51,7 @@ def get_all_images(marker_path):
     """
     image_extensions = {'.jpg', '.jpeg', '.png', '.bmp', '.gif', '.tiff', '.webp'}
     image_files = []
-    
+
     # 遍历所有子目录和文件
     # os.walk 返回一个生成器，每次迭代产生一个三元组 (dirpath, dirnames, filenames)，从高层级到低层级依次返回
     # 三元组，最外层时的files是目录，内层目录为root时，则dirs为空，文件名为files
@@ -63,7 +62,7 @@ def get_all_images(marker_path):
             file_ext = os.path.splitext(file)[1].lower()
             if file_ext in image_extensions:
                 image_files.append(file_path)
-    
+
     # 按文件路径排序，确保顺序一致
     return sorted(image_files)
 
@@ -82,28 +81,28 @@ def process_marker_data(marker_name, data_path, output_path):
     """
     marker_input_path = os.path.join(data_path, marker_name)
     marker_output_path = os.path.join(output_path, marker_name)
-    
+
     # 创建输出文件夹
     os.makedirs(marker_output_path, exist_ok=True)
-    
+
     # 获取所有图片
     image_files = get_all_images(marker_input_path)
-    
+
     print(f"  处理标志: {marker_name}")
     print(f"    找到 {len(image_files)} 张图片")
-    
+
     # 复制并重命名图片,start参数指定idx的值从1开始
     for idx, image_path in enumerate(image_files, start=1):
         # 获取原始文件扩展名
         _, ext = os.path.splitext(image_path)
-        
+
         # 新文件名: 1.jpg, 2.jpg, ...
         new_filename = f"{idx}{ext.lower()}"
         output_file_path = os.path.join(marker_output_path, new_filename)
-        
+
         # 复制文件
         shutil.copy2(image_path, output_file_path)
-    
+
     print(f"    成功复制 {len(image_files)} 张图片到 {marker_output_path}")
     return len(image_files)
 
@@ -114,48 +113,48 @@ def main():
     """
     # 获取脚本所在目录
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    
+
     # 设置路径,路径上类似于D:\Pycharm\Projects\MachineLearning\markerrecognition\src\..\data
     data_path = os.path.join(script_dir, "..", "data")
     output_path = os.path.join(script_dir, "..", "output")
-    
+
     # 转换为绝对路径
     data_path = os.path.abspath(data_path)
     output_path = os.path.abspath(output_path)
-    
+
     print("=" * 60)
     print("标志识别数据整合工具")
     print("=" * 60)
     print(f"数据路径: {data_path}")
     print(f"输出路径: {output_path}")
     print()
-    
+
     # 检查data文件夹是否存在
     if not os.path.exists(data_path):
         print(f"错误: 数据路径不存在: {data_path}")
         return
-    
+
     # 创建输出文件夹
     os.makedirs(output_path, exist_ok=True)
-    
+
     # 获取所有标志文件夹
     marker_folders = get_marker_folders(data_path)
-    
+
     if not marker_folders:
         print("错误: 未找到任何标志文件夹")
         return
-    
+
     print(f"发现 {len(marker_folders)} 个标志文件夹:")
     for folder in marker_folders:
         print(f"  - {folder}")
     print()
-    
+
     # 处理每个标志
     total_images = 0
     for marker_name in marker_folders:
         count = process_marker_data(marker_name, data_path, output_path)
         total_images += count
-    
+
     print()
     print("=" * 60)
     print("数据整合完成!")
