@@ -68,6 +68,35 @@ def get_all_images(marker_path):
     return sorted(image_files)
 
 
+def get_summary_filename(marker_name) -> str:
+    """
+    获取到原本的标记名对应的名字
+    :param marker_name: 标志的文件夹名
+    :return: 处理后的名字
+    """
+    # 对应：火源、打架、垃圾堆、限速、掉头、右转、停车、其他
+    NAME_COLLECTION = ["fire", "fight", "rubbish", "ratelimit", "turn_round", "right_turn", "park", "other"]
+
+    new_name = ""
+    if marker_name == "1.火源":
+        new_name = NAME_COLLECTION[0]
+    elif marker_name == "2.打架":
+        new_name = NAME_COLLECTION[1]
+    elif marker_name == "3.垃圾堆":
+        new_name = NAME_COLLECTION[2]
+    elif marker_name == "4.限速":
+        new_name = NAME_COLLECTION[3]
+    elif marker_name == "5.掉头":
+        new_name = NAME_COLLECTION[4]
+    elif marker_name == "6.右转":
+        new_name = NAME_COLLECTION[5]
+    elif marker_name == "7.停车":
+        new_name = NAME_COLLECTION[6]
+    else:
+        new_name = NAME_COLLECTION[-1]
+    return new_name
+
+
 def process_marker_data(marker_name, data_path, output_path):
     """
     处理单个标志的数据：合并所有批次并重命名
@@ -85,9 +114,17 @@ def process_marker_data(marker_name, data_path, output_path):
     marker_train_path = os.path.join(output_path, "train", marker_name)
     marker_test_path = os.path.join(output_path, "test", marker_name)
 
-    # 创建输出对应的训练、测试文件夹
+    # 创建输出对应的训练、测试文件夹, 已存在则跳过创建
     os.makedirs(marker_train_path, exist_ok=True)
     os.makedirs(marker_test_path, exist_ok=True)
+
+    # 检查是否存在汇总的文件夹，不在则创建
+    marker_train_summary_path = os.path.join(output_path, "train", "summary")
+    marker_test_summary_path = os.path.join(output_path, "test", "summary")
+    if not os.path.exists(marker_train_summary_path):
+        os.makedirs(marker_train_summary_path, exist_ok=True)
+    if not os.path.exists(marker_test_summary_path):
+        os.makedirs(marker_test_summary_path, exist_ok=True)
 
     # 获取所有图片
     image_files = get_all_images(marker_input_path)
@@ -108,17 +145,27 @@ def process_marker_data(marker_name, data_path, output_path):
         # 获取原始文件扩展名
         _, ext = os.path.splitext(image_path)
 
-        # 新文件名: 1.jpg, 2.jpg, ...
+        # 划分入训练集、测试集的新文件名: 1.jpg, 2.jpg, ...
         new_filename = f"{idx}{ext.lower()}"
-        # 前80%放入训练集
-        output_path = marker_train_path if idx <= total_images * DIVISION_RATIO else marker_test_path
-        output_file_path = os.path.join(output_path, new_filename)
+        # 汇总文件夹的文件名
+        summary_filename = f"{get_summary_filename(marker_name)}_{idx}{ext.lower()}"
 
-        # 复制文件
+        # 前80%放入训练集
+        if idx <= total_images * DIVISION_RATIO:
+            output_path = marker_train_path
+            summary_output_path = marker_train_summary_path
+        else:
+            output_path = marker_test_path
+            summary_output_path = marker_test_summary_path
+
+        output_file_path = os.path.join(output_path, new_filename)
+        summary_file_path = os.path.join(summary_output_path, summary_filename)
+        # 复制文件到汇总的文件夹
         shutil.copy2(image_path, output_file_path)
+        shutil.copy2(image_path, summary_file_path)
 
     print(f"    成功复制 {total_images * DIVISION_RATIO} 张图片到 {marker_train_path}")
-    print(f"    成功复制 {total_images * (1-DIVISION_RATIO)} 张图片到 {marker_test_path}")
+    print(f"    成功复制 {total_images * (1 - DIVISION_RATIO)} 张图片到 {marker_test_path}")
     return len(image_files)
 
 
