@@ -14,7 +14,8 @@
 功能：
 - 读取每个标志下的所有批次子文件夹中的图片
 - 将所有图片合并并重命名为1.jpg, 2.jpg...等连续编号
-- 输出到output文件夹中，保持8个标志文件夹结构
+- 输出到output文件夹中，保持8个标志文件夹结构以及汇总的结构
+- 划分训练集和测试集
 """
 
 import os
@@ -176,8 +177,8 @@ def main():
     # 获取脚本所在目录
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
-    # 设置路径,路径上类似于D:\Pycharm\Projects\MachineLearning\markerrecognition\src\..\data
-    data_path = os.path.join(script_dir, "..", "data")
+    # 设置路径,路径上类似于D:\Pycharm\Projects\MachineLearning\markerrecognition\src\..\data\originaldata
+    data_path = os.path.join(script_dir, "..", "data", "originaldata")
     output_path = os.path.join(script_dir, "..", "output")
 
     # 转换为绝对路径
