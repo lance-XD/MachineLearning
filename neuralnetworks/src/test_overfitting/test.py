@@ -14,6 +14,10 @@ net = network2.Network([784, 30, 10], cost=network2.CrossEntropyCost)
 
 net.large_weight_initializer()
 
-# 使用随机梯度下降算法进行训练，训练30轮，每批为10组数据，学习率相应减小为0.5，测试数据为test_data的10000张手写数字图片
-net.SGD(training_data=training_data[:1000], epochs=400, mini_batch_size=10, eta=0.5, evaluation_data=test_data,
+# 使用随机梯度下降算法进行训练，训练400轮，每批为10组数据，学习率相应减小为0.5，测试数据为test_data的10000张手写数字图片
+# net.SGD(training_data=training_data[:1000], epochs=400, mini_batch_size=10, eta=0.5, evaluation_data=test_data,
+#         monitor_evaluation_accuracy=True, monitor_training_accuracy=True)
+
+# 通过增大数据量，验证过拟合的幅度，可观察到数据量增大后，过拟合的幅度有所降低
+net.SGD(training_data=training_data, epochs=30, mini_batch_size=10, eta=0.5, evaluation_data=test_data,
         monitor_evaluation_accuracy=True, monitor_training_accuracy=True)
