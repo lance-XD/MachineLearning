@@ -4,6 +4,8 @@
 
 import _pickle as cPickle
 import gzip
+import os.path
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -14,8 +16,15 @@ def load_data():
     mnist中的图片为28*28=784像素
     :return: (训练数据，验证数据，测试数据)，训练数据为50000张手写数字图像及对应的图像数字（0-9），验证数据、测试数据为另外的10000张
     """
+    # 获取本文件所在的目录
+    base_dir = os.path.dirname(__file__)
+    # 构建 data 所在目录的绝对路径
+    data_path = os.path.join(base_dir, "..", 'data', "mnist.pkl.gz")
+    # 规范化路径
+    data_path = os.path.normpath(data_path)
     # 打开文件, gzip以二进制编码的方式读取
-    f = gzip.open('../data/mnist.pkl.gz', 'rb')
+    f = gzip.open(data_path, 'rb')
+
     # 从文件中读取内容，cPickle以ASCII编码的方式读取文件
     training_data, validation_data, test_data = cPickle.load(f, encoding='latin1')
     f.close()
@@ -33,15 +42,15 @@ def load_data_wrapper():
     # 将数字的结果转换为10维的结果
     training_results = [vectorized_result(y) for y in tr_d[1]]
     # 只有训练的数据的y需要供神经网络读取，所以封装成（x,y）的形式
-    training_data = zip(training_inputs, training_results)
+    training_data = list(zip(training_inputs, training_results))
     # 转换验证数据的格式
     validation_inputs = [np.reshape(x, (784, 1)) for x in va_d[0]]
     # 验证数据，此时y还是单个数字
-    validation_data = zip(validation_inputs, va_d[1])
+    validation_data = list(zip(validation_inputs, va_d[1]))
     # 转换测试数据的格式
     test_inputs = [np.reshape(x, (784, 1)) for x in te_d[0]]
     # 测试数据，此时y还是单个数字
-    test_data = zip(test_inputs, te_d[1])
+    test_data = list(zip(test_inputs, te_d[1]))
     return training_data, validation_data, test_data
 
 
