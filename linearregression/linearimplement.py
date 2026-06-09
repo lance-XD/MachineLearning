@@ -6,6 +6,7 @@ linear = linear_model.LinearRegression()
 y = np.array([165000, 55720, 68550, 65290, 71290, 72950, 78950, 103450])
 x = np.array([110, 68, 76, 76, 76, 76, 86, 100])
 
+# reshape(-1, 1)把任意长度的一维数据"竖起来"变成一列
 linear.fit(x.reshape(-1, 1), y)
 
 k0 = linear.coef_[0]
